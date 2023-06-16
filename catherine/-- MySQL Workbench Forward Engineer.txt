@@ -1,0 +1,162 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema catherine
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema catherine
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `catherine` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+USE `catherine` ;
+
+-- -----------------------------------------------------
+-- Table `catherine`.`area`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `catherine`.`area` (
+  `idArea` INT NOT NULL AUTO_INCREMENT,
+  `nombreArea` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`idArea`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `catherine`.`empleado`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `catherine`.`empleado` (
+  `idEmpleado` INT NOT NULL AUTO_INCREMENT,
+  `nombreApellidoEmpleado` VARCHAR(45) NULL DEFAULT NULL,
+  `usuarioEmpleado` VARCHAR(45) NULL DEFAULT NULL,
+  `telefonoEmpleado` VARCHAR(45) NULL DEFAULT NULL,
+  `id_Area` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`idEmpleado`),
+  INDEX `idEmpleado_idx` (`id_Area` ASC) VISIBLE,
+  CONSTRAINT `idEmpleado`
+    FOREIGN KEY (`id_Area`)
+    REFERENCES `catherine`.`area` (`idArea`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `catherine`.`cliente`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `catherine`.`cliente` (
+  `idCliente` INT NOT NULL AUTO_INCREMENT,
+  `nombreApellidoCliente` VARCHAR(60) NULL DEFAULT NULL,
+  `dniCliente` VARCHAR(8) NULL DEFAULT NULL,
+  `telefonoCliente` VARCHAR(10) NULL DEFAULT NULL,
+  PRIMARY KEY (`idCliente`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `catherine`.`salon`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `catherine`.`salon` (
+  `idSalon` INT NOT NULL AUTO_INCREMENT,
+  `NombreSalon` VARCHAR(45) NULL DEFAULT NULL,
+  `DireccionSalon` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`idSalon`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `catherine`.`evento`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `catherine`.`evento` (
+  `idEvento` INT NOT NULL AUTO_INCREMENT,
+  `reseñaEvento` VARCHAR(500) NULL DEFAULT NULL,
+  `estadoEvento` TINYINT NULL DEFAULT NULL,
+  `cantidadDeInvitadosEvento` INT NULL DEFAULT NULL,
+  `id_Cliente` INT NULL DEFAULT NULL,
+  `id_Salon` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`idEvento`),
+  INDEX `cliente_idx` (`id_Cliente` ASC) VISIBLE,
+  INDEX `salon_idx` (`id_Salon` ASC) VISIBLE,
+  CONSTRAINT `cliente`
+    FOREIGN KEY (`id_Cliente`)
+    REFERENCES `catherine`.`cliente` (`idCliente`),
+  CONSTRAINT `salon`
+    FOREIGN KEY (`id_Salon`)
+    REFERENCES `catherine`.`salon` (`idSalon`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `catherine`.`provision`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `catherine`.`provision` (
+  `idProvision` INT NOT NULL AUTO_INCREMENT,
+  `NombreProvision` VARCHAR(45) NULL DEFAULT NULL,
+  `Stock` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`idProvision`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `catherine`.`menu`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `catherine`.`menu` (
+  `idMenu` INT NOT NULL AUTO_INCREMENT,
+  `NombreMenu` VARCHAR(45) NULL DEFAULT NULL,
+  `id_Provision` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`idMenu`),
+  INDEX `provision_idx` (`id_Provision` ASC) VISIBLE,
+  CONSTRAINT `provision`
+    FOREIGN KEY (`id_Provision`)
+    REFERENCES `catherine`.`provision` (`idProvision`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `catherine`.`agenda`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `catherine`.`agenda` (
+  `fechaAgenda` DATE NOT NULL,
+  `horaAgenda` VARCHAR(45) NOT NULL,
+  `id_Evento` INT NULL DEFAULT NULL,
+  `id_Menu` INT NULL DEFAULT NULL,
+  `id_Encargado` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`fechaAgenda`, `horaAgenda`),
+  INDEX `evento_idx` (`id_Evento` ASC) VISIBLE,
+  INDEX `menu_idx` (`id_Menu` ASC) VISIBLE,
+  INDEX `encargado_idx` (`id_Encargado` ASC) VISIBLE,
+  CONSTRAINT `encargado`
+    FOREIGN KEY (`id_Encargado`)
+    REFERENCES `catherine`.`empleado` (`idEmpleado`),
+  CONSTRAINT `evento`
+    FOREIGN KEY (`id_Evento`)
+    REFERENCES `catherine`.`evento` (`idEvento`),
+  CONSTRAINT `menu`
+    FOREIGN KEY (`id_Menu`)
+    REFERENCES `catherine`.`menu` (`idMenu`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
